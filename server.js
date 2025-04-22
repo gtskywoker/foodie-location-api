@@ -1,21 +1,8 @@
-const express = require('express');
-const cors = require('cors');
-const axios = require('axios');
-
-const app = express();
-app.use(cors());
-
-const PORT = process.env.PORT || 3000;
-
-// Health check endpoint
-app.get('/', (req, res) => {
-  res.send('OK');
-});
-
-// Reverse geocoding endpoint
 app.get('/location', async (req, res) => {
   const { lat, lon } = req.query;
   const apiKey = process.env.LOCATIONIQ_API_KEY;
+
+  console.log("📦 API Key Loaded:", apiKey); // <- ใส่ตรวจตรงนี้เลย
 
   if (!lat || !lon) return res.status(400).send('Missing lat/lon');
 
@@ -30,9 +17,7 @@ app.get('/location', async (req, res) => {
     });
     res.json(response.data);
   } catch (err) {
-    console.error('↕️ LocationIQ error:', err.response?.data || err.message);
+    console.error("↕️ LocationIQ error:", err.response?.data || err.message);
     res.status(500).json({ error: err.response?.data || err.message });
   }
 });
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
