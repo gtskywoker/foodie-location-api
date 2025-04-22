@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
@@ -9,10 +7,12 @@ app.use(cors());
 
 const PORT = process.env.PORT || 3000;
 
+// Health check endpoint
 app.get('/', (req, res) => {
   res.send('OK');
 });
 
+// Reverse geocoding endpoint
 app.get('/location', async (req, res) => {
   const { lat, lon } = req.query;
   const apiKey = process.env.LOCATIONIQ_API_KEY;
@@ -30,7 +30,8 @@ app.get('/location', async (req, res) => {
     });
     res.json(response.data);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('↕️ LocationIQ error:', err.response?.data || err.message);
+    res.status(500).json({ error: err.response?.data || err.message });
   }
 });
 
