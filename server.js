@@ -1,4 +1,4 @@
-// Generated on 2025-04-23 14:30:00 (ICT)
+// Generated on 2025-04-23 15:15:00 (ICT)
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -22,7 +22,7 @@ app.get('/location', async (req, res) => {
   }
 
   try {
-    const response = await axios.get(`https://us1.locationiq.com/v1/reverse.php`, {
+    const response = await axios.get('https://us1.locationiq.com/v1/reverse.php', {
       params: {
         key: apiKey,
         lat,
@@ -33,7 +33,7 @@ app.get('/location', async (req, res) => {
     });
     res.json(response.data);
   } catch (err) {
-    // LocationIQ error logged for debugging
+    // handle error silently
     res.status(500).json({ error: err.response?.data || err.message });
   }
 });
@@ -48,7 +48,7 @@ app.get('/search', async (req, res) => {
   }
 
   try {
-    const response = await axios.get(`https://us1.locationiq.com/v1/search.php`, {
+    const response = await axios.get('https://us1.locationiq.com/v1/search.php', {
       params: {
         key: apiKey,
         q,
@@ -58,14 +58,9 @@ app.get('/search', async (req, res) => {
     });
     res.json(response.data);
   } catch (err) {
-    // Search error
+    // handle error silently
     res.status(500).json({ error: err.response?.data || err.message });
   }
-});
-
-// Debug endpoint to verify key loading
-app.get('/debug-key', (req, res) => {
-  res.send(`Key being used: ${process.env.LOCATIONIQ_API_KEY || 'NOT SET'}`);
 });
 
 app.listen(PORT, () => {
@@ -73,17 +68,17 @@ app.listen(PORT, () => {
 });
 
 /*
-How to deploy the update to Render:
-1. Commit changes:
+Deployment Steps:
+1. Commit & Push:
    git add server.js
-   git commit -m "Remove debug logs and cleanup server.js"
+   git commit -m "Remove debug logs and debug-key route"
    git push
 
-2. Render auto-deploys on push to main. Or manually:
-   - Go to your Render dashboard > foodie-location-api service > Deploys
-   - Click "Manual Deploy" and deploy the latest commit.
+2. On Render:
+   - The service auto-deploys on push. Or manually trigger:
+     Dashboard > foodie-location-api > Deploys > Manual Deploy > Deploy Latest Commit.
 
 3. Verify:
    curl "https://foodie-location-api.onrender.com/search?q=test&lang=th"
-   should return a JSON array of results.
+   should return JSON array; logs will only show startup message.
 */
