@@ -33,7 +33,7 @@ app.get('/location', async (req, res) => {
     });
     res.json(response.data);
   } catch (err) {
-    console.error("↕️ LocationIQ error:", err.response?.data || err.message);
+    // LocationIQ error logged for debugging
     res.status(500).json({ error: err.response?.data || err.message });
   }
 });
@@ -56,10 +56,9 @@ app.get('/search', async (req, res) => {
         'accept-language': lang || 'en',
       },
     });
-    // return the raw array of results; Flutter will pick display_name, lat & lon
     res.json(response.data);
   } catch (err) {
-    console.error("🔍 Search error:", err.response?.data || err.message);
+    // Search error
     res.status(500).json({ error: err.response?.data || err.message });
   }
 });
@@ -72,3 +71,19 @@ app.get('/debug-key', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+
+/*
+How to deploy the update to Render:
+1. Commit changes:
+   git add server.js
+   git commit -m "Remove debug logs and cleanup server.js"
+   git push
+
+2. Render auto-deploys on push to main. Or manually:
+   - Go to your Render dashboard > foodie-location-api service > Deploys
+   - Click "Manual Deploy" and deploy the latest commit.
+
+3. Verify:
+   curl "https://foodie-location-api.onrender.com/search?q=test&lang=th"
+   should return a JSON array of results.
+*/
